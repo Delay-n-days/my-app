@@ -39,3 +39,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+dist/**
+dist/client/.assetsignore
+dist/client/file.svg
+dist/client/globe.svg
+dist/client/next.svg
+dist/client/vercel.svg
+dist/client/window.svg
+dist/client/.vite/manifest.json
+dist/client/assets/framework-Ce_Irb5n.js
+dist/client/assets/index-CodqAGyT.css
+dist/client/assets/index-CykkoHK1.js
+dist/client/assets/worker-entry-DGp-XIcH.js
+dist/server/__vite_rsc_assets_manifest.js
+dist/server/index.js
+dist/server/wrangler.json
+dist/server/.vite/manifest.json
+dist/server/assets/index-CodqAGyT.css
+dist/server/ssr/__vite_rsc_assets_manifest.js
+dist/server/ssr/index.js
+dist/server/ssr/assets/worker-entry-CblsNtmI.js
