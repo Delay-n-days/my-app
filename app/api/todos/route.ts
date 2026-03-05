@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { getTodos, createTodo, updateTodo, deleteTodo, initDB } from '@/lib/db';
 
 // 确保数据库表已创建
-let dbInitialized = false;
+let dbInitPromise: Promise<void> | null = null;
 
 async function ensureDBInitialized() {
-  if (!dbInitialized) {
-    await initDB();
-    dbInitialized = true;
+  if (!dbInitPromise) {
+    dbInitPromise = initDB();
   }
+  await dbInitPromise;
 }
 
 // GET - 获取所有todos
@@ -50,8 +50,15 @@ export async function PATCH(request: Request) {
     if (!id) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
+
+    if (typeof completed !== 'boolean') {
+      return NextResponse.json({ error: 'completed must be a boolean' }, { status: 400 });
+    }
     
     const updatedTodo = await updateTodo(id, completed);
+    if (!updatedTodo) {
+      return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
+    }
     return NextResponse.json(updatedTodo);
   } catch (error) {
     console.error('Error updating todo:', error);
@@ -69,7 +76,10 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
     
-    await deleteTodo(id);
+    const deleted = await deleteTodo(id);
+    if (!deleted) {
+      return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
+    }
     return NextResponse.json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);

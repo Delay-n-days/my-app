@@ -1,7 +1,11 @@
 import { Pool } from 'pg';
 
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
 const pool = new Pool({
-  connectionString: 'postgresql://aderversa:123456@175.178.107.232:5432/testdb'
+  connectionString: process.env.DATABASE_URL
 });
 
 export async function query(text: string, params?: unknown[]) {
@@ -48,11 +52,12 @@ export async function updateTodo(id: number, completed: boolean) {
     'UPDATE todos SET completed = $1 WHERE id = $2 RETURNING *',
     [completed, id]
   );
-  return result.rows[0];
+  return result.rows[0] ?? null;
 }
 
 export async function deleteTodo(id: number) {
-  await query('DELETE FROM todos WHERE id = $1', [id]);
+  const result = await query('DELETE FROM todos WHERE id = $1', [id]);
+  return (result.rowCount ?? 0) > 0;
 }
 
 export default pool;
